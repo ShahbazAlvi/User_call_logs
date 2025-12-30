@@ -18,6 +18,7 @@ class AppButton extends StatelessWidget {
       onTap:press,
       child: Container(
         height:screenHeight*0.08,
+
         width: width ?? double.infinity,
         decoration:  BoxDecoration(
           color: Color(0xFF5B86E5),
