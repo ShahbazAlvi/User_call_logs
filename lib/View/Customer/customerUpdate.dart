@@ -349,7 +349,7 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      
+
       if (widget.customerId == null) {
         // Create new customer
         final success = await provider.createCustomer();
