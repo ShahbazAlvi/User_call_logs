@@ -336,7 +336,7 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
   Future<void> _submitForm(BuildContext context) async {
     if (!_formKey.currentState!.validate()) {
       return;
-      
+
     }
 
     final provider = Provider.of<CompanyProvider>(context, listen: false);
