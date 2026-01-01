@@ -456,9 +456,9 @@ class _StaffScreenState extends State<StaffScreen> {
                   //   ),
                   // ),
                   bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(100),
+                    preferredSize: const Size.fromHeight(170),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                       child: Column(
                         children: [
                           // Search Bar
@@ -507,7 +507,7 @@ class _StaffScreenState extends State<StaffScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 20),
                           // Filter Chips
                           SizedBox(
                             height: 40,

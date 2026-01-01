@@ -318,6 +318,59 @@ class CompanyProvider with ChangeNotifier {
 
 
 
+  // Future<void> fetchCustomerById(String id) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //   if (token == null) return;
+  //
+  //   try {
+  //     isLoading = true;
+  //     notifyListeners();
+  //
+  //     final response = await http.get(
+  //       Uri.parse('https://call-logs-backend.onrender.com/api/customers/$id'),
+  //       headers: {'Authorization': 'Bearer $token'},
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final result = jsonDecode(response.body);
+  //       final data = result['data'];
+  //
+  //       businessTypeController.text = data['businessType'] ?? '';
+  //       companyNameController.text = data['companyName'] ?? '';
+  //       addressController.text = data['address'] ?? '';
+  //       cityController.text = data['city'] ?? '';
+  //       emailController.text = data['email'] ?? '';
+  //       phoneController.text = data['phoneNumber'] ?? '';
+  //
+  //      // selectedStaffId = data['assignedStaff']?['_id'];
+  //       selectedStaffName = data['assignedStaff'] ?? ''; // ✅ name directly
+  //
+  //       selectedProductId = data['assignedProducts']?['_id'];
+  //
+  //       personsList = [];
+  //       if (data['persons'] != null) {
+  //         for (var p in data['persons']) {
+  //           personsList.add({
+  //             'fullName': TextEditingController(text: p['fullName'] ?? ''),
+  //             'designation': TextEditingController(text: p['designation'] ?? ''),
+  //             'department': TextEditingController(text: p['department'] ?? ''),
+  //             'phoneNumber': TextEditingController(text: p['phoneNumber'] ?? ''),
+  //             'email': TextEditingController(text: p['email'] ?? ''),
+  //           });
+  //         }
+  //       }
+  //     } else {
+  //       print("Failed to fetch customer data: ${response.body}");
+  //     }
+  //   } catch (e) {
+  //     print("Error: $e");
+  //   } finally {
+  //     isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
+
   Future<void> fetchCustomerById(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -343,10 +396,27 @@ class CompanyProvider with ChangeNotifier {
         emailController.text = data['email'] ?? '';
         phoneController.text = data['phoneNumber'] ?? '';
 
-       // selectedStaffId = data['assignedStaff']?['_id'];
-        selectedStaffName = data['assignedStaff'] ?? ''; // ✅ name directly
+        // Handle assignedStaff - it might be a string or an object
+        if (data['assignedStaff'] != null) {
+          if (data['assignedStaff'] is String) {
+            selectedStaffName = data['assignedStaff'];
+          } else if (data['assignedStaff'] is Map) {
+            selectedStaffName = data['assignedStaff']['_id']; // Store ID, not name
+          }
+        } else {
+          selectedStaffName = null;
+        }
 
-        selectedProductId = data['assignedProducts']?['_id'];
+        // Handle assignedProducts
+        if (data['assignedProducts'] != null) {
+          if (data['assignedProducts'] is String) {
+            selectedProductId = data['assignedProducts'];
+          } else if (data['assignedProducts'] is Map) {
+            selectedProductId = data['assignedProducts']['_id'];
+          }
+        } else {
+          selectedProductId = null;
+        }
 
         personsList = [];
         if (data['persons'] != null) {

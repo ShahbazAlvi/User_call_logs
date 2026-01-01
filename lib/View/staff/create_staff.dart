@@ -130,6 +130,8 @@ import 'package:infinity/compoents/AppButton.dart';
 import 'package:infinity/compoents/AppTextfield.dart';
 import 'package:provider/provider.dart';
 import '../../Provider/staff/StaffProvider.dart';
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class StaffCreateScreen extends StatefulWidget {
   const StaffCreateScreen({super.key});
@@ -732,5 +734,106 @@ class _StaffCreateScreenState extends State<StaffCreateScreen> {
         ],
       ),
     );
+  }
+}
+
+
+
+
+
+
+
+class SafeNetworkImage extends StatelessWidget {
+  final String? imageUrl;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final Widget? placeholder;
+  final Widget? errorWidget;
+  final bool isCircular;
+
+  const SafeNetworkImage({
+    super.key,
+    this.imageUrl,
+    this.width,
+    this.height,
+    this.fit = BoxFit.cover,
+    this.placeholder,
+    this.errorWidget,
+    this.isCircular = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // If no URL or empty URL, show error widget
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return _buildErrorWidget();
+    }
+
+    // Check if URL is valid
+    if (!_isValidUrl(imageUrl!)) {
+      return _buildErrorWidget();
+    }
+
+    // Use CachedNetworkImage for better performance and caching
+    return Container(
+      width: width,
+      height: height,
+      decoration: isCircular
+          ? BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.grey[200],
+      )
+          : null,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl!,
+        width: width,
+        height: height,
+        fit: fit,
+        placeholder: (context, url) =>
+        placeholder ?? _buildPlaceholder(),
+        errorWidget: (context, url, error) =>
+        errorWidget ?? _buildErrorWidget(),
+        imageBuilder: isCircular
+            ? (context, imageProvider) => Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+            ),
+          ),
+        )
+            : null,
+      ),
+    );
+  }
+
+  bool _isValidUrl(String url) {
+    try {
+      final uri = Uri.tryParse(url);
+      return uri != null && uri.hasScheme;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      width: width,
+      height: height,
+      color: Colors.grey[200],
+      child: Center(
+        child: Icon(
+          Icons.person,
+          size: width != null ? width! * 0.4 : 24,
+          color: Colors.grey[400],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return errorWidget ?? _buildPlaceholder();
   }
 }

@@ -507,10 +507,6 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                   elevation: 4,
                   backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
                   surfaceTintColor: isDarkMode ? Colors.grey[800] : Colors.white,
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                    onPressed: () => Navigator.pop(context),
-                  ),
                   actions: [
                     IconButton(
                       onPressed: _refreshCompanies,
@@ -549,7 +545,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                     style: TextStyle(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 24,
                     ),
                   ),
                   centerTitle: true,
@@ -558,62 +554,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
 
 
-                  // flexibleSpace: FlexibleSpaceBar(
-                  //  // collapseMode: CollapseMode.pin,
-                  //   centerTitle: true,
-                  //  // titlePadding: const EdgeInsets.only(bottom: 16),
-                  //   title: Text(
-                  //     'Customers',
-                  //     style: TextStyle(
-                  //       color: theme.colorScheme.primary,
-                  //       fontWeight: FontWeight.bold,
-                  //       fontSize: 20,
-                  //     ),
-                  //   ),
-                  //   background: Container(
-                  //     decoration: BoxDecoration(
-                  //       gradient: LinearGradient(
-                  //         begin: Alignment.topCenter,
-                  //         end: Alignment.bottomCenter,
-                  //         colors: [
-                  //           theme.colorScheme.primary.withOpacity(0.15),
-                  //           Colors.transparent,
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         mainAxisAlignment: MainAxisAlignment.end,
-                  //         children: [
-                  //           Text(
-                  //             'Customers',
-                  //             style: TextStyle(
-                  //               fontSize: 32,
-                  //               fontWeight: FontWeight.bold,
-                  //               color: theme.colorScheme.primary,
-                  //             ),
-                  //           ),
-                  //           const SizedBox(height: 4),
-                  //           Consumer<CompanyProvider>(
-                  //             builder: (context, provider, child) {
-                  //               return Text(
-                  //                 '${provider.companies.length} companies',
-                  //                 style: TextStyle(
-                  //                   fontSize: 14,
-                  //                   color: Colors.grey[600],
-                  //                 ),
-                  //               );
-                  //             },
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+
                   bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(92), // Reduced from 100 to 92
+                    preferredSize: const Size.fromHeight(120), // Reduced from 100 to 92
                     child: Container(
                       color: isDarkMode ? Colors.grey[900] : Colors.white,
                       child: Padding(
