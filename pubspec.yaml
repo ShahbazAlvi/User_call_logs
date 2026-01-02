@@ -48,6 +48,7 @@ dependencies:
   percent_indicator: ^4.2.5
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
+  iconsax: ^0.0.8
 
 flutter_icons:
     android: true
