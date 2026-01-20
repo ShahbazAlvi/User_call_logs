@@ -15,6 +15,7 @@ class CompanyProvider with ChangeNotifier {
   String message='';
   File? companyLogo;
   String? selectedStaffName; // ✅ use name instead of ID
+  //String? selectedStaffId;
 
   String? selectedProductId;
 
@@ -173,8 +174,10 @@ class CompanyProvider with ChangeNotifier {
       request.fields['city'] = cityController.text;
       request.fields['email'] = emailController.text;
       request.fields['phoneNumber'] = phoneController.text;
-      //request.fields['assignedStaff'] = selectedStaffId ?? '';
+     // request.fields['assignedStaff'] = selectedStaffId ?? '';
       request.fields['assignedStaff'] = selectedStaffName ?? '';
+      print(selectedStaffName);
+      print('8888888888888888888888888');
 
 
       //request.fields['assignedStaff'] = assignedStaffController.text;

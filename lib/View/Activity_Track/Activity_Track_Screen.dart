@@ -13,66 +13,99 @@ class ActivityTrackScreen extends StatefulWidget {
 }
 
 class _ActivityTrackScreenState extends State<ActivityTrackScreen> {
+  final ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(
+      // appBar: AppBar(
+      //
+      //
+      //   title: Center(child: Text( "Activity Tracker",
+      //       style: TextStyle(
+      //         color: Colors.white,
+      //         fontWeight: FontWeight.bold,
+      //         fontSize: 22,
+      //         letterSpacing: 1.2,
+      //       )),
+      //   ),
+      //   centerTitle: true,
+      //   elevation: 6,
+      //   flexibleSpace: Container(
+      //     decoration: const BoxDecoration(
+      //       gradient: LinearGradient(
+      //         colors: [Color(0xFF5B86E5), Color(0xFF36D1DC)],
+      //         begin: Alignment.topLeft,
+      //         end: Alignment.bottomRight,
+      //       ),
+      //     ),
+      //   ),
+      //   iconTheme: const IconThemeData(color: Colors.white),
+      // ),
 
+      body:NestedScrollView(
+        controller: _scrollController,
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              pinned: true,
+              floating: true,
+              expandedHeight: 80,
+              elevation: 4,
+              backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
+              surfaceTintColor: isDarkMode ? Colors.grey[800] : Colors.white,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: Text(
+                'Activity Tracking',
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                ),
+              ),
+              centerTitle: true,
+            ),
+          ];
+        },
 
-        title: Center(child: Text( "Activity Tracker",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-              letterSpacing: 1.2,
-            )),
-        ),
-        centerTitle: true,
-        elevation: 6,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF5B86E5), Color(0xFF36D1DC)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8,16, 8,16),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=>CustomersTrackScreen()));
+                    },
+                      child: containerBuilder(icon: Icons.people, title:'Customers Track', details: 'Monitor Customer Create, Update and assignments')),
+                  SizedBox(height: 10,),
+                  GestureDetector(
+                      onTap: (){
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=>MeetingTrackScreen()));
+                      },
+                      child: containerBuilder(icon: Icons.handshake, title:'Meeting Track', details: 'Track meeting schedules and progress')),
+                  SizedBox(height: 10,),
+                  GestureDetector(
+                      onTap: (){
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=>FollowUpTrackScreen()));
+                      },
+                      child: containerBuilder(icon: Icons.note_alt, title:'Follow Up Track', details: 'See recent follow-ups and status')),
+                  SizedBox(height: 10,),
+                  GestureDetector(
+                      onTap: (){
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=>StaffTrackScreen()));
+                      },
+                      child: containerBuilder(icon: Icons.person, title:'Staff Track', details: 'Monitor staff activity and engagement'))
+                ],
+              ),
             ),
+
           ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body:SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8,16, 8,16),
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>CustomersTrackScreen()));
-                  },
-                    child: containerBuilder(icon: Icons.people, title:'Customers Track', details: 'Monitor Customer Create, Update and assignments')),
-                SizedBox(height: 10,),
-                GestureDetector(
-                    onTap: (){
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=>MeetingTrackScreen()));
-                    },
-                    child: containerBuilder(icon: Icons.handshake, title:'Meeting Track', details: 'Track meeting schedules and progress')),
-                SizedBox(height: 10,),
-                GestureDetector(
-                    onTap: (){
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=>FollowUpTrackScreen()));
-                    },
-                    child: containerBuilder(icon: Icons.note_alt, title:'Follow Up Track', details: 'See recent follow-ups and status')),
-                SizedBox(height: 10,),
-                GestureDetector(
-                    onTap: (){
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=>StaffTrackScreen()));
-                    },
-                    child: containerBuilder(icon: Icons.person, title:'Staff Track', details: 'Monitor staff activity and engagement'))
-              ],
-            ),
-          ),
-          
         ),
       ) ,
     );

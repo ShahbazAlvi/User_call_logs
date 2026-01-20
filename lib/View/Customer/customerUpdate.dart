@@ -263,6 +263,24 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
   String? _logoError;
 
   @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(() async {
+  //     final staff = Provider.of<StaffProvider>(context, listen: false);
+  //     final product = Provider.of<ProductProvider>(context, listen: false);
+  //     final companyProvider = Provider.of<CompanyProvider>(context, listen: false);
+  //
+  //     await staff.fetchStaff();
+  //     await product.fetchProducts();
+  //
+  //     // 👇 If editing existing customer, load its data
+  //     if (widget.customerId != null) {
+  //       await companyProvider.fetchCustomerById(widget.customerId!);
+  //     }
+  //   });
+  // }
+
+  @override
   void initState() {
     super.initState();
     Future.microtask(() async {
@@ -270,10 +288,15 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
       final product = Provider.of<ProductProvider>(context, listen: false);
       final companyProvider = Provider.of<CompanyProvider>(context, listen: false);
 
+      // Clear previous data when editing
+      if (widget.customerId != null) {
+        companyProvider.clearForm();
+      }
+
       await staff.fetchStaff();
       await product.fetchProducts();
 
-      // 👇 If editing existing customer, load its data
+      // Load customer data if editing
       if (widget.customerId != null) {
         await companyProvider.fetchCustomerById(widget.customerId!);
       }
@@ -877,7 +900,7 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            // Assigned Staff
+                           // Assigned Staff
                             _buildDropdownField(
                               context,
                               staffProvider,
@@ -893,9 +916,27 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
                               ),
                               staffProvider.staffs,
                             ),
+                           // In UpdateCustomerScreen's _buildDropdownField call for staff:
+
                             const SizedBox(height: 16),
 
                             // Assigned Product
+                            // _buildDropdownField(
+                            //   context,
+                            //   productProvider,
+                            //   'Assigned Product *',
+                            //   provider.selectedProductId,
+                            //       (value) {
+                            //     provider.selectedProductId = value;
+                            //     provider.notifyListeners();
+                            //   },
+                            //       (product) => DropdownMenuItem<String>(
+                            //     value: product.sId,
+                            //     child: Text(product.name ?? 'Unnamed Product'),
+                            //   ),
+                            //   productProvider.products,
+                            // ),
+                            // In UpdateCustomerScreen's _buildDropdownField call for products:
                             _buildDropdownField(
                               context,
                               productProvider,
@@ -1090,6 +1131,97 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
     );
   }
 
+  // Widget _buildDropdownField<T>(
+  //     BuildContext context,
+  //     dynamic provider,
+  //     String label,
+  //     String? value,
+  //     Function(String?) onChanged,
+  //     DropdownMenuItem<String> Function(T) itemBuilder,
+  //     List<T> items,
+  //     ) {
+  //   final theme = Theme.of(context);
+  //   final isDarkMode = theme.brightness == Brightness.dark;
+  //
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         label,
+  //         style: TextStyle(
+  //           fontSize: 14,
+  //           fontWeight: FontWeight.w500,
+  //           color: isDarkMode ? Colors.white : Colors.grey[700],
+  //         ),
+  //       ),
+  //       const SizedBox(height: 8),
+  //       provider.isLoading
+  //           ? Container(
+  //         padding: const EdgeInsets.symmetric(vertical: 16),
+  //         child: Center(
+  //           child: CircularProgressIndicator(
+  //             strokeWidth: 2,
+  //             color: theme.colorScheme.primary,
+  //           ),
+  //         ),
+  //       )
+  //           : items.isEmpty
+  //           ? Container(
+  //         padding: const EdgeInsets.symmetric(vertical: 12),
+  //         decoration: BoxDecoration(
+  //           color: isDarkMode ? Colors.grey[700] : Colors.grey[100],
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //         child: Center(
+  //           child: Text(
+  //             'No items available',
+  //             style: TextStyle(
+  //               color: Colors.grey[500],
+  //             ),
+  //           ),
+  //         ),
+  //       )
+  //           : Container(
+  //         padding: const EdgeInsets.symmetric(horizontal: 12),
+  //         decoration: BoxDecoration(
+  //           color: isDarkMode ? Colors.grey[700] : Colors.grey[100],
+  //           borderRadius: BorderRadius.circular(12),
+  //           border: Border.all(
+  //             color: isDarkMode ? Colors.grey[600]! : Colors.grey[300]!,
+  //           ),
+  //         ),
+  //         child: DropdownButtonFormField<String>(
+  //           value: value,
+  //           isExpanded: true,
+  //           decoration: const InputDecoration(
+  //             border: InputBorder.none,
+  //           ),
+  //           hint: Text(
+  //             'Select ${label.replaceAll(' *', '')}',
+  //             style: TextStyle(
+  //               color: Colors.grey[500],
+  //             ),
+  //           ),
+  //           icon: Icon(
+  //             Icons.arrow_drop_down_rounded,
+  //             color: theme.colorScheme.primary,
+  //           ),
+  //           style: TextStyle(
+  //             color: isDarkMode ? Colors.white : Colors.grey[800],
+  //             fontSize: 14,
+  //           ),
+  //           validator: (value) => value == null || value.isEmpty
+  //               ? 'Please select ${label.replaceAll(' *', '').toLowerCase()}'
+  //               : null,
+  //           onChanged: onChanged,
+  //           items: items.map(itemBuilder).toList(),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+
   Widget _buildDropdownField<T>(
       BuildContext context,
       dynamic provider,
@@ -1101,6 +1233,19 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
       ) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+
+    // Create unique items list
+    List<DropdownMenuItem<String>> uniqueItems = [];
+    Set<String> seenValues = {};
+
+    for (final item in items) {
+      final dropdownItem = itemBuilder(item);
+      if (dropdownItem.value != null &&
+          !seenValues.contains(dropdownItem.value)) {
+        seenValues.add(dropdownItem.value!);
+        uniqueItems.add(dropdownItem);
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1124,7 +1269,7 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
             ),
           ),
         )
-            : items.isEmpty
+            : uniqueItems.isEmpty
             ? Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
@@ -1173,10 +1318,29 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
                 ? 'Please select ${label.replaceAll(' *', '').toLowerCase()}'
                 : null,
             onChanged: onChanged,
-            items: items.map(itemBuilder).toList(),
+            items: uniqueItems,
           ),
         ),
       ],
     );
+  }
+
+// Helper method to ensure unique dropdown items
+  List<DropdownMenuItem<String>> _getUniqueDropdownItems<T>(
+      List<T> items,
+      DropdownMenuItem<String> Function(T) itemBuilder,
+      ) {
+    final uniqueItems = <DropdownMenuItem<String>>[];
+    final seenValues = <String>{};
+
+    for (final item in items) {
+      final dropdownItem = itemBuilder(item);
+      if (!seenValues.contains(dropdownItem.value)) {
+        seenValues.add(dropdownItem.value ?? '');
+        uniqueItems.add(dropdownItem);
+      }
+    }
+
+    return uniqueItems;
   }
 }

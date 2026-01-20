@@ -8,6 +8,7 @@ class StaffTrackProvider with ChangeNotifier {
   bool isLoading = false;
   List<User> staffList = [];
   String? token;
+  String errorMessage='';
 
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();

@@ -129,10 +129,12 @@ class UnassignCustomerProvider with ChangeNotifier {
   List<CustomerData> _filteredCustomers = [];
   bool _isLoading = false;
   final List<String> _selectedIds = [];
+  String? _errorMessage;
 
   List<CustomerData> get customers => _filteredCustomers;
   bool get isLoading => _isLoading;
   List<String> get selectedIds => _selectedIds;
+  String? get errorMessage => _errorMessage;
 
   // Fetch unassigned customers
   Future<void> fetchUnassignedCustomers() async {

@@ -9,6 +9,7 @@ import '../../model/AllMeetingModel.dart';
 class NoDateMeetingProvider with ChangeNotifier {
   List<MeetingData> _meetings = [];
   bool _isLoading = false;
+  String errorMessage='';
 
   List<MeetingData> get meetings => _meetings;
   bool get isLoading => _isLoading;
