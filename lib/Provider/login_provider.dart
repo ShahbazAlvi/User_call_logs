@@ -44,6 +44,9 @@ class LoginProvider with ChangeNotifier{
         if (response.statusCode == 200 && data["token"] != null) {
           message = "Login successful!";
           final prefs = await SharedPreferences.getInstance();
+         // final prefs = await SharedPreferences.getInstance();
+          await prefs.clear(); // 🔥 IMPORTANT
+
           await prefs.setString('token', data["token"]);
           await prefs.setString('username',data['user']['username']);
           await prefs.setString('role',data['user']['role']);
@@ -68,5 +71,19 @@ class LoginProvider with ChangeNotifier{
 
 
 
+  }
+}
+
+
+class ApiService {
+  static Future<Map<String, String>> authHeader() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    return {
+      'Authorization': 'Bearer $token',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
   }
 }
