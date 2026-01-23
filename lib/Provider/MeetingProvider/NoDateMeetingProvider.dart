@@ -98,6 +98,84 @@ class NoDateMeetingProvider with ChangeNotifier {
       debugPrint('⚠️ Exception during delete: $e');
     }
   }
+  // Future<void> updateMeeting({
+  //   required String id,
+  //   required String timeline, // e.g. "Follow Up"
+  //   required String companyName,
+  //   required String personId,
+  //   required String productId,
+  //   required String staffId,
+  //   String? designation,
+  //   String? nextDate,
+  //   String? nextTime,
+  //   String? details,
+  //   String? referenceProvidedBy,
+  //   String? detailsOption,
+  //   String? contactMethod,
+  // }) async {
+  //   final url = 'https://call-logs-backend.onrender.com/api/meetings/$id';
+  //
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final token = prefs.getString('token');
+  //     if (token == null) {
+  //       debugPrint("❌ No token found for updateMeeting");
+  //       return;
+  //     }
+  //
+  //     Map<String, dynamic> payload;
+  //
+  //     if (timeline == "Follow Up") {
+  //       payload = {
+  //         "companyName": companyName,
+  //         "person": personId,
+  //         "designation": designation,
+  //         "product": productId,
+  //         "Timeline": timeline, // ✅ Correct field name
+  //         "followDates": [nextDate ?? ""],
+  //         "followTimes": [nextTime ?? ""],
+  //         "details": [details ?? ""],
+  //         "action": detailsOption ?? "",
+  //         "reference": referenceProvidedBy ?? "",
+  //         "referToStaff": staffId,
+  //         "contactMethod": contactMethod ?? "",
+  //       };
+  //     } else {
+  //       payload = {
+  //         "companyName": companyName,
+  //         "person": personId,
+  //         "designation": designation,
+  //         "product": productId,
+  //         "Timeline": timeline, // ✅ Correct field name
+  //       };
+  //     }
+  //
+  //     debugPrint("🟡 Payload Sent: ${jsonEncode(payload)}");
+  //
+  //     final response = await http.put(
+  //       Uri.parse(url),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //       },
+  //       body: jsonEncode(payload),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       debugPrint("✅ Meeting updated successfully: ${response.body}");
+  //       fetchMeetings();
+  //       notifyListeners();
+  //     } else {
+  //       debugPrint("❌ Update failed: ${response.body}");
+  //     }
+  //   } catch (e) {
+  //     debugPrint("⚠️ Error updating meeting: $e");
+  //   }
+  // }
+
+
+
+
   Future<void> updateMeeting({
     required String id,
     required String timeline, // e.g. "Follow Up"
@@ -125,29 +203,72 @@ class NoDateMeetingProvider with ChangeNotifier {
 
       Map<String, dynamic> payload;
 
+      // ✅ contactMethod کو validate کریں
+      String validatedContactMethod = "By Phone"; // default
+      if (contactMethod != null && contactMethod.isNotEmpty) {
+        if (contactMethod == "Phone" || contactMethod == "Call") {
+          validatedContactMethod = "By Phone";
+        } else if (contactMethod == "Visit") {
+          validatedContactMethod = "By Visit";
+        } else if (contactMethod == "WhatsApp") {
+          validatedContactMethod = "By WhatsApp";
+        } else if (contactMethod == "Email") {
+          validatedContactMethod = "By Email";
+        } else {
+          validatedContactMethod = contactMethod;
+        }
+      }
+
+      // ✅ action کو validate کریں
+      String validatedAction = detailsOption ?? "";
+      if (validatedAction.isEmpty && timeline == "Follow Up") {
+        validatedAction = "Send Profile"; // default for Follow Up
+      }
+
       if (timeline == "Follow Up") {
         payload = {
           "companyName": companyName,
           "person": personId,
-          "designation": designation,
+          "designation": designation ?? "Manager",
           "product": productId,
-          "Timeline": timeline, // ✅ Correct field name
+          "Timeline": timeline,
           "followDates": [nextDate ?? ""],
           "followTimes": [nextTime ?? ""],
           "details": [details ?? ""],
-          "action": detailsOption ?? "",
+          "action": validatedAction, // ✅ validated action
           "reference": referenceProvidedBy ?? "",
           "referToStaff": staffId,
-          "contactMethod": contactMethod ?? "",
+          "contactMethod": validatedContactMethod, // ✅ validated contactMethod
+          "status": "Follow Up Required", // ✅ صحیح status
         };
       } else {
         payload = {
           "companyName": companyName,
           "person": personId,
-          "designation": designation,
+          "designation": designation ?? "",
           "product": productId,
-          "Timeline": timeline, // ✅ Correct field name
+          "Timeline": timeline,
+          "referToStaff": staffId,
+          "contactMethod": validatedContactMethod, // ✅ validated contactMethod
         };
+
+        // ✅ دیگر statuses کے لیے الگ values
+        if (timeline == "Not Interested") {
+          payload["status"] = "Not Interested";
+          payload["followDates"] = [];
+          payload["followTimes"] = [];
+          payload["details"] = [];
+        } else if (timeline == "Already Installed") {
+          payload["status"] = "Already Installed";
+          payload["followDates"] = [];
+          payload["followTimes"] = [];
+          payload["details"] = [];
+        } else if (timeline == "Phone Responded") {
+          payload["status"] = "Phone Responded";
+          payload["followDates"] = [];
+          payload["followTimes"] = [];
+          payload["details"] = [];
+        }
       }
 
       debugPrint("🟡 Payload Sent: ${jsonEncode(payload)}");
@@ -167,16 +288,13 @@ class NoDateMeetingProvider with ChangeNotifier {
         notifyListeners();
       } else {
         debugPrint("❌ Update failed: ${response.body}");
+        throw Exception("Update failed: ${response.statusCode}");
       }
     } catch (e) {
       debugPrint("⚠️ Error updating meeting: $e");
+      rethrow;
     }
   }
-
-
-
-
-
 
 
 

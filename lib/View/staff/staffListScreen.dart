@@ -344,6 +344,7 @@ class _StaffScreenState extends State<StaffScreen> {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
+
       backgroundColor: isDarkMode ? Colors.grey[900] : Colors.grey[50],
       floatingActionButton: Consumer<StaffProvider>(
         builder: (context, provider, child) {
@@ -370,197 +371,202 @@ class _StaffScreenState extends State<StaffScreen> {
           final filteredStaffs = _filteredStaffs(provider);
           final departments = _availableDepartments(provider);
 
-          return NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  pinned: true,
-                  floating: true,
-                  expandedHeight: 180,
-                  elevation: 4,
-                  backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
-                  surfaceTintColor: isDarkMode ? Colors.grey[800] : Colors.white,
-                  title: Text(
-                    "Staff Members",
-                    style: TextStyle(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 24,
-                      letterSpacing: -0.5,
+          return RefreshIndicator(
+            onRefresh: () async {
+              await Provider.of<StaffProvider>(context, listen: false).fetchStaff();
+            },
+            child: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  SliverAppBar(
+                    pinned: true,
+                    floating: true,
+                    expandedHeight: 200,
+                    elevation: 4,
+                    backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
+                    surfaceTintColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                    title: Text(
+                      "Staff Members",
+                      style: TextStyle(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 24,
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                  ),
-                  centerTitle: true,
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: () => provider.fetchStaff(),
-                      icon: const Icon(Icons.refresh_rounded),
-                      tooltip: 'Refresh',
+                    centerTitle: true,
+                    leading: IconButton(
+                      icon:  Icon(Icons.arrow_back_ios_new_rounded,color: theme.colorScheme.primary,),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                  ],
-                  // flexibleSpace: FlexibleSpaceBar(
-                  //   collapseMode: CollapseMode.pin,
-                  //   centerTitle: true,
-                  //   titlePadding: const EdgeInsets.only(bottom: 16),
-                  //   title: AnimatedOpacity(
-                  //     opacity: innerBoxIsScrolled ? 1.0 : 0.0,
-                  //     duration: const Duration(milliseconds: 200),
-                  //     child: Text(
-                  //       'Staff Members',
-                  //       style: TextStyle(
-                  //         color: theme.colorScheme.primary,
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 20,
-                  //       ),
-                  //     ),
-                  //   ),
-                  //   background: Container(
-                  //     decoration: BoxDecoration(
-                  //       gradient: LinearGradient(
-                  //         begin: Alignment.topCenter,
-                  //         end: Alignment.bottomCenter,
-                  //         colors: [
-                  //           theme.colorScheme.primary.withOpacity(0.15),
-                  //           Colors.transparent,
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     // child: Padding(
-                  //     //   padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
-                  //     //   child: Column(
-                  //     //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     //     mainAxisAlignment: MainAxisAlignment.end,
-                  //     //     children: [
-                  //     //       // Text(
-                  //     //       //   'Staff Members',
-                  //     //       //   style: TextStyle(
-                  //     //       //     fontSize: 32,
-                  //     //       //     fontWeight: FontWeight.bold,
-                  //     //       //     color: theme.colorScheme.primary,
-                  //     //       //   ),
-                  //     //       // ),
-                  //     //      // const SizedBox(height: 4),
-                  //     //      //  Text(
-                  //     //      //    '${provider.staffs.length} team members',
-                  //     //      //    style: TextStyle(
-                  //     //      //      fontSize: 14,
-                  //     //      //      color: Colors.grey[600],
-                  //     //      //    ),
-                  //     //      //  ),
-                  //     //     ],
-                  //     //   ),
-                  //     // ),
-                  //   ),
-                  // ),
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(170),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                      child: Column(
-                        children: [
-                          // Search Bar
-                          Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
+                    actions: [
+                      IconButton(
+                        onPressed: () => provider.fetchStaff(),
+                        icon:  Icon(Icons.refresh_rounded,color: theme.colorScheme.primary,),
+                        tooltip: 'Refresh',
+                      ),
+                    ],
+                    // flexibleSpace: FlexibleSpaceBar(
+                    //   collapseMode: CollapseMode.pin,
+                    //   centerTitle: true,
+                    //   titlePadding: const EdgeInsets.only(bottom: 16),
+                    //   title: AnimatedOpacity(
+                    //     opacity: innerBoxIsScrolled ? 1.0 : 0.0,
+                    //     duration: const Duration(milliseconds: 200),
+                    //     child: Text(
+                    //       'Staff Members',
+                    //       style: TextStyle(
+                    //         color: theme.colorScheme.primary,
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: 20,
+                    //       ),
+                    //     ),
+                    //   ),
+                    //   background: Container(
+                    //     decoration: BoxDecoration(
+                    //       gradient: LinearGradient(
+                    //         begin: Alignment.topCenter,
+                    //         end: Alignment.bottomCenter,
+                    //         colors: [
+                    //           theme.colorScheme.primary.withOpacity(0.15),
+                    //           Colors.transparent,
+                    //         ],
+                    //       ),
+                    //     ),
+                    //     // child: Padding(
+                    //     //   padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                    //     //   child: Column(
+                    //     //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     //     children: [
+                    //     //       // Text(
+                    //     //       //   'Staff Members',
+                    //     //       //   style: TextStyle(
+                    //     //       //     fontSize: 32,
+                    //     //       //     fontWeight: FontWeight.bold,
+                    //     //       //     color: theme.colorScheme.primary,
+                    //     //       //   ),
+                    //     //       // ),
+                    //     //      // const SizedBox(height: 4),
+                    //     //      //  Text(
+                    //     //      //    '${provider.staffs.length} team members',
+                    //     //      //    style: TextStyle(
+                    //     //      //      fontSize: 14,
+                    //     //      //      color: Colors.grey[600],
+                    //     //      //    ),
+                    //     //      //  ),
+                    //     //     ],
+                    //     //   ),
+                    //     // ),
+                    //   ),
+                    // ),
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(170),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                        child: Column(
+                          children: [
+                            // Search Bar
+                            Container(
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
+                                ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 16),
-                                Icon(
-                                  Icons.search_rounded,
-                                  color: Colors.grey[500],
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: TextField(
-                                    controller: _searchController,
-                                    onChanged: (value) {
-                                      setState(() => _searchQuery = value);
-                                    },
-                                    decoration: InputDecoration(
-                                      hintText: 'Search staff by name, email or department...',
-                                      hintStyle: TextStyle(color: Colors.grey[500]),
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                    ),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 16),
+                                  Icon(
+                                    Icons.search_rounded,
+                                    color: Colors.grey[500],
                                   ),
-                                ),
-                                if (_searchQuery.isNotEmpty)
-                                  IconButton(
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      setState(() => _searchQuery = '');
-                                    },
-                                    icon: Icon(
-                                      Icons.close_rounded,
-                                      color: Colors.grey[500],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          // Filter Chips
-                          SizedBox(
-                            height: 40,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: departments.map((dept) {
-                                final isSelected = _selectedFilter == dept;
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: FilterChip(
-                                    label: Text(dept),
-                                    selected: isSelected,
-                                    onSelected: (selected) {
-                                      setState(() => _selectedFilter = selected ? dept : 'All');
-                                    },
-                                    backgroundColor: isDarkMode
-                                        ? Colors.grey[800]
-                                        : Colors.grey[100],
-                                    selectedColor: theme.colorScheme.primary
-                                        .withOpacity(0.2),
-                                    checkmarkColor: theme.colorScheme.primary,
-                                    labelStyle: TextStyle(
-                                      color: isSelected
-                                          ? theme.colorScheme.primary
-                                          : Colors.grey[700],
-                                      fontWeight:
-                                      isSelected ? FontWeight.w600 : FontWeight.normal,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      side: BorderSide(
-                                        color: isSelected
-                                            ? theme.colorScheme.primary
-                                            : Colors.transparent,
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _searchController,
+                                      onChanged: (value) {
+                                        setState(() => _searchQuery = value);
+                                      },
+                                      decoration: InputDecoration(
+                                        hintText: 'Search staff by name, email or department...',
+                                        hintStyle: TextStyle(color: Colors.grey[500]),
+                                        border: InputBorder.none,
+                                        isDense: true,
                                       ),
                                     ),
                                   ),
-                                );
-                              }).toList(),
+                                  if (_searchQuery.isNotEmpty)
+                                    IconButton(
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        setState(() => _searchQuery = '');
+                                      },
+                                      icon: Icon(
+                                        Icons.close_rounded,
+                                        color: Colors.grey[500],
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 20),
+                            // Filter Chips
+                            SizedBox(
+                              height: 40,
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: departments.map((dept) {
+                                  final isSelected = _selectedFilter == dept;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: FilterChip(
+                                      label: Text(dept),
+                                      selected: isSelected,
+                                      onSelected: (selected) {
+                                        setState(() => _selectedFilter = selected ? dept : 'All');
+                                      },
+                                      backgroundColor: isDarkMode
+                                          ? Colors.grey[800]
+                                          : Colors.grey[100],
+                                      selectedColor: theme.colorScheme.primary
+                                          .withOpacity(0.2),
+                                      checkmarkColor: theme.colorScheme.primary,
+                                      labelStyle: TextStyle(
+                                        color: isSelected
+                                            ? theme.colorScheme.primary
+                                            : Colors.grey[700],
+                                        fontWeight:
+                                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(
+                                          color: isSelected
+                                              ? theme.colorScheme.primary
+                                              : Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ];
-            },
-            body: provider.isLoading
-                ? _buildShimmerLoading()
-                : filteredStaffs.isEmpty
-                ? _buildEmptyState(context, _searchQuery, _searchController)
-                : _buildStaffList(context, filteredStaffs),
+                ];
+              },
+              body: provider.isLoading
+                  ? _buildShimmerLoading()
+                  : filteredStaffs.isEmpty
+                  ? _buildEmptyState(context, _searchQuery, _searchController)
+                  : _buildStaffList(context, filteredStaffs),
+            ),
           );
         },
       ),

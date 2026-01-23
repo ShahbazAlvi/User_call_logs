@@ -229,6 +229,42 @@ class _StaffCreateScreenState extends State<StaffCreateScreen> {
     );
   }
 
+  // Future<void> _submitForm(BuildContext context) async {
+  //   if (_formKey.currentState!.validate()) {
+  //     final provider = Provider.of<StaffProvider>(context, listen: false);
+  //
+  //     if (provider.selectedImage == null) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('Please select a profile picture'),
+  //           backgroundColor: Colors.orange,
+  //           behavior: SnackBarBehavior.floating,
+  //         ),
+  //       );
+  //       return;
+  //     }
+  //
+  //     try {
+  //       final success = await provider.uploadStaff(
+  //         username: usernameController.text.trim(),
+  //         email: emailController.text.trim(),
+  //         department: deptController.text.trim(),
+  //         designation: desigController.text.trim(),
+  //         address: addressController.text.trim(),
+  //         number: numberController.text.trim(),
+  //         password: passwordController.text,
+  //         role: _selectedRole ?? 'staff',
+  //       );
+  //
+  //       // if (success) {
+  //       //   _showSuccessDialog(context);
+  //       // }
+  //     } catch (e) {
+  //       // Error is handled in provider and shown via snackbar
+  //     }
+  //   }
+  // }
+
   Future<void> _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       final provider = Provider.of<StaffProvider>(context, listen: false);
@@ -256,11 +292,44 @@ class _StaffCreateScreenState extends State<StaffCreateScreen> {
           role: _selectedRole ?? 'staff',
         );
 
-        // if (success) {
-        //   _showSuccessDialog(context);
-        // }
+        if (success) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Staff added successfully!'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+
+          // Show success dialog
+          _showSuccessDialog(context);
+        } else {
+          // Show error message from provider
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(provider.message.isNotEmpty
+                  ? provider.message
+                  : 'Failed to add staff'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+        }
       } catch (e) {
-        // Error is handled in provider and shown via snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     }
   }
@@ -314,6 +383,20 @@ class _StaffCreateScreenState extends State<StaffCreateScreen> {
     );
   }
 
+  // void _clearForm() {
+  //   _formKey.currentState?.reset();
+  //   setState(() {
+  //     usernameController.clear();
+  //     emailController.clear();
+  //     deptController.clear();
+  //     desigController.clear();
+  //     addressController.clear();
+  //     numberController.clear();
+  //     passwordController.clear();
+  //     _selectedRole = 'staff';
+  //   });
+  //   Provider.of<StaffProvider>(context, listen: false);//.clearImage();
+  // }
   void _clearForm() {
     _formKey.currentState?.reset();
     setState(() {
@@ -326,7 +409,16 @@ class _StaffCreateScreenState extends State<StaffCreateScreen> {
       passwordController.clear();
       _selectedRole = 'staff';
     });
-    Provider.of<StaffProvider>(context, listen: false);//.clearImage();
+    Provider.of<StaffProvider>(context, listen: false).clearImage();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Form cleared'),
+        backgroundColor: Colors.blue,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override

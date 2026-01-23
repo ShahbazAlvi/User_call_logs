@@ -398,6 +398,7 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
   String? selectedTimeline;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
+  String? selectedContactMethod;
   final TextEditingController detailsController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   bool _isSending = false;
@@ -598,6 +599,81 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
   }
 
   // 🔹 Save meeting updates
+  // Future<void> _saveMeeting(BuildContext context) async {
+  //   if (selectedTimeline == null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: const Text("Please select a meeting type"),
+  //         backgroundColor: Theme.of(context).colorScheme.error,
+  //         behavior: SnackBarBehavior.floating,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(8),
+  //         ),
+  //       ),
+  //     );
+  //     return;
+  //   }
+  //
+  //   final provider = Provider.of<NoDateMeetingProvider>(context, listen: false);
+  //   final m = widget.meeting;
+  //
+  //   setState(() => _isSending = true);
+  //
+  //   try {
+  //     await provider.updateMeeting(
+  //       id: m.id!,
+  //       timeline: selectedTimeline!,
+  //       companyName: m.companyName ?? '',
+  //       personId: m.person?.id ?? '',
+  //       productId: m.product?.id ?? '',
+  //       staffId: m.person?.assignedStaff?.id ?? '',
+  //       nextDate: selectedDate != null
+  //           ? DateFormat('yyyy-MM-dd').format(selectedDate!)
+  //           : null,
+  //       nextTime: selectedTime != null
+  //           ? selectedTime!.format(context)
+  //           : null,
+  //       details: detailsController.text,
+  //       designation: "Manager",
+  //       detailsOption: "Visit Done",
+  //       referenceProvidedBy: "Customer",
+  //       contactMethod: "Phone",
+  //     );
+  //
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: const Text('Meeting updated successfully'),
+  //           backgroundColor: Colors.green,
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(8),
+  //           ),
+  //         ),
+  //       );
+  //       Navigator.pop(context);
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Failed to update meeting: $e'),
+  //           backgroundColor: Colors.red,
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(8),
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() => _isSending = false);
+  //     }
+  //   }
+  // }
+
+
   Future<void> _saveMeeting(BuildContext context) async {
     if (selectedTimeline == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -619,6 +695,35 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
     setState(() => _isSending = true);
 
     try {
+      // ✅ درست enum values استعمال کریں
+      String designation = "Manager";
+      String action = "";
+      String contactMethod = "";
+      String reference = "";
+
+      // ✅ ہر status کے لیے الگ values
+      if (selectedTimeline == "Follow Up") {
+        designation = "Manager";
+        action = "Send Profile"; // ✅ صحیح action
+        contactMethod = "By Phone"; // ✅ "Phone" کی جگہ "By Phone"
+        reference = "Customer";
+      } else if (selectedTimeline == "Not Interested") {
+        designation = "";
+        action = "";
+        contactMethod = "By Phone";
+        reference = "";
+      } else if (selectedTimeline == "Already Installed") {
+        designation = "";
+        action = "";
+        contactMethod = "By Phone";
+        reference = "";
+      } else if (selectedTimeline == "Phone Responded") {
+        designation = "";
+        action = "";
+        contactMethod = "By Phone";
+        reference = "";
+      }
+
       await provider.updateMeeting(
         id: m.id!,
         timeline: selectedTimeline!,
@@ -633,10 +738,10 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
             ? selectedTime!.format(context)
             : null,
         details: detailsController.text,
-        designation: "Manager",
-        detailsOption: "Visit Done",
-        referenceProvidedBy: "Customer",
-        contactMethod: "Phone",
+        designation: designation,
+        detailsOption: action, // ✅ action کو detailsOption کے طور پر بھیجیں
+        referenceProvidedBy: reference,
+        contactMethod: contactMethod, // ✅ درست contactMethod
       );
 
       if (mounted) {
@@ -671,7 +776,6 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -1100,6 +1204,56 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
                                     ),
                                   ),
                                 ),
+                        // EditMeetingScreen میں یہ variable شامل کریں
+
+
+// Build method میں، Follow-up Details section میں یہ شامل کریں:
+                        Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Contact Method',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: isDarkMode ? Colors.white : Colors.grey[700],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: isDarkMode ? Colors.grey[700] : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isDarkMode ? Colors.grey[600]! : Colors.grey[300]!,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: DropdownButtonFormField<String>(
+                                value: selectedContactMethod ?? 'By Phone',
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Select contact method',
+                                  hintStyle: TextStyle(color: Colors.grey[500]),
+                                ),
+                                items: [
+                                  'By Phone',
+                                  'By Visit',
+                                  'By WhatsApp',
+                                  'By Email',
+                                ].map((method) => DropdownMenuItem(
+                                  value: method,
+                                  child: Text(method),
+                                )).toList(),
+                                onChanged: (value) {
+                                  setState(() => selectedContactMethod = value);
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                               ],
                             ),
                           ],
@@ -1260,5 +1414,44 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
         ),
       ),
     );
+  }
+}
+
+// lib/utils/meeting_constants.dart
+
+class MeetingConstants {
+  // Valid contact methods for backend
+  static const List<String> validContactMethods = [
+    "By Phone",
+    "By Visit",
+    "By WhatsApp",
+    "By Email",
+  ];
+
+  // Valid actions for backend
+  static const List<String> validActions = [
+    "Send Profile",
+    "Visit Done",
+    "Call Done",
+    "Quotation Sent",
+    "Sample Provided",
+    "Demo Given",
+  ];
+
+  // Frontend to backend mapping
+  static String getBackendContactMethod(String frontendMethod) {
+    switch (frontendMethod.toLowerCase()) {
+      case 'phone':
+      case 'call':
+        return 'By Phone';
+      case 'visit':
+        return 'By Visit';
+      case 'whatsapp':
+        return 'By WhatsApp';
+      case 'email':
+        return 'By Email';
+      default:
+        return 'By Phone'; // default
+    }
   }
 }

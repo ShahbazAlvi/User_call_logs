@@ -183,6 +183,51 @@ class NoDateMeetingModel {
   }
 }
 
+// class MeetingData {
+//   final String? id;
+//   final String? companyName;
+//   final Person? person;
+//   final Product? product;
+//   final String? status;
+//   final List<String> followDates;
+//   final List<String> followTimes;
+//   final List<dynamic> details;
+//   final String? timeline;
+//   final String? createdAt;
+//   final String? updatedAt;
+//
+//   MeetingData({
+//     this.id,
+//     this.companyName,
+//     this.person,
+//     this.product,
+//     this.status,
+//     this.followDates = const [],
+//     this.followTimes = const [],
+//     this.details = const [],
+//     this.timeline,
+//     this.createdAt,
+//     this.updatedAt,
+//   });
+//
+//   factory MeetingData.fromJson(Map<String, dynamic> json) {
+//     return MeetingData(
+//       id: json['_id'],
+//       companyName: json['companyName'],
+//       person:
+//       json['person'] != null ? Person.fromJson(json['person']) : null,
+//       product:
+//       json['product'] != null ? Product.fromJson(json['product']) : null,
+//       status: json['status'],
+//       followDates: List<String>.from(json['followDates'] ?? []),
+//       followTimes: List<String>.from(json['followTimes'] ?? []),
+//       details: List<dynamic>.from(json['details'] ?? []),
+//       timeline: json['Timeline'],
+//       createdAt: json['createdAt'],
+//       updatedAt: json['updatedAt'],
+//     );
+//   }
+// }
 class MeetingData {
   final String? id;
   final String? companyName;
@@ -193,6 +238,7 @@ class MeetingData {
   final List<String> followTimes;
   final List<dynamic> details;
   final String? timeline;
+  final String? referToStaff; // ✅ Add this
   final String? createdAt;
   final String? updatedAt;
 
@@ -206,6 +252,7 @@ class MeetingData {
     this.followTimes = const [],
     this.details = const [],
     this.timeline,
+    this.referToStaff, // ✅ Add this
     this.createdAt,
     this.updatedAt,
   });
@@ -214,21 +261,19 @@ class MeetingData {
     return MeetingData(
       id: json['_id'],
       companyName: json['companyName'],
-      person:
-      json['person'] != null ? Person.fromJson(json['person']) : null,
-      product:
-      json['product'] != null ? Product.fromJson(json['product']) : null,
+      person: json['person'] != null ? Person.fromJson(json['person']) : null,
+      product: json['product'] != null ? Product.fromJson(json['product']) : null,
       status: json['status'],
       followDates: List<String>.from(json['followDates'] ?? []),
       followTimes: List<String>.from(json['followTimes'] ?? []),
       details: List<dynamic>.from(json['details'] ?? []),
       timeline: json['Timeline'],
+      referToStaff: json['referToStaff'], // ✅ Add this
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
     );
   }
 }
-
 class Person {
   final String? id;
   final String? companyName;

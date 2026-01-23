@@ -610,18 +610,7 @@ class _SuccessClientScreenState extends State<SuccessClientScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add new client functionality
-        },
-        backgroundColor: const Color(0xFF667EEA),
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        elevation: 4,
-        child: const Icon(Icons.add, size: 28),
-      ),
+
     );
   }
 }
